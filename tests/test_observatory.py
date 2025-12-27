@@ -14,7 +14,7 @@ class TestObservatoryConfig:
         """Test default configuration values."""
         config = ObservatoryConfig()
         assert config.enabled is True
-        assert config.app_name == "pyapp"
+        assert config.app_name == "fastapi"
 
     def test_custom_config(self):
         """Test custom configuration."""
@@ -115,5 +115,6 @@ class TestAsyncOperations:
     async def test_track_job_context_manager(self):
         """Test track_job context manager."""
         obs = Observatory()
-        async with obs.track_job("test_job", "* * * * *"):
+        ctx = await obs.track_job("test_job", "* * * * *")
+        async with ctx:
             pass  # Job execution
