@@ -3,8 +3,7 @@
 import asyncio
 import base64
 import json
-from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any
 
 
 class MemoryStorage:
@@ -13,28 +12,28 @@ class MemoryStorage:
     def __init__(self) -> None:
         """Initialize memory storage."""
         self._lock = asyncio.Lock()
-        self._counters: Dict[str, Dict[str, Any]] = {}
-        self._gauges: Dict[str, Dict[str, Any]] = {}
-        self._histograms: Dict[str, Dict[str, Any]] = {}
+        self._counters: dict[str, dict[str, Any]] = {}
+        self._gauges: dict[str, dict[str, Any]] = {}
+        self._histograms: dict[str, dict[str, Any]] = {}
 
-    def _encode_labels(self, values: List[str]) -> str:
+    def _encode_labels(self, values: list[str]) -> str:
         """Encode label values to a unique key."""
         return base64.b64encode(json.dumps(values).encode()).decode()
 
-    def _decode_labels(self, encoded: str) -> List[str]:
+    def _decode_labels(self, encoded: str) -> list[str]:
         """Decode label values from key."""
         return json.loads(base64.b64decode(encoded.encode()).decode())
 
-    def _meta_key(self, data: Dict[str, Any]) -> str:
+    def _meta_key(self, data: dict[str, Any]) -> str:
         """Generate metadata key for a metric."""
         return f"{data['type']}:{data['name']}"
 
-    def _value_key(self, data: Dict[str, Any]) -> str:
+    def _value_key(self, data: dict[str, Any]) -> str:
         """Generate value key for a metric sample."""
         encoded = self._encode_labels(data["labelValues"])
         return f"{data['name']}:{encoded}"
 
-    async def update_counter(self, data: Dict[str, Any]) -> None:
+    async def update_counter(self, data: dict[str, Any]) -> None:
         """Update a counter metric."""
         async with self._lock:
             meta_key = self._meta_key(data)
@@ -60,7 +59,7 @@ class MemoryStorage:
 
             samples[value_key]["value"] += data["value"]
 
-    async def update_gauge(self, data: Dict[str, Any]) -> None:
+    async def update_gauge(self, data: dict[str, Any]) -> None:
         """Update a gauge metric."""
         async with self._lock:
             meta_key = self._meta_key(data)
@@ -91,7 +90,7 @@ class MemoryStorage:
             else:  # increment
                 samples[value_key]["value"] += data["value"]
 
-    async def update_histogram(self, data: Dict[str, Any]) -> None:
+    async def update_histogram(self, data: dict[str, Any]) -> None:
         """Update a histogram metric."""
         async with self._lock:
             meta_key = self._meta_key(data)
@@ -133,7 +132,7 @@ class MemoryStorage:
             sample["sum"] += data["value"]
             sample["count"] += 1
 
-    async def collect(self) -> List[Dict[str, Any]]:
+    async def collect(self) -> list[dict[str, Any]]:
         """Collect all metrics for rendering."""
         async with self._lock:
             metrics = []
@@ -192,7 +191,7 @@ class MemoryStorage:
 
             return metrics
 
-    def _collect_histogram(self, histogram: Dict[str, Any]) -> Dict[str, Any]:
+    def _collect_histogram(self, histogram: dict[str, Any]) -> dict[str, Any]:
         """Collect and compute histogram buckets with cumulative counts."""
         meta = histogram["meta"]
         buckets = list(meta["buckets"]) + ["+Inf"]

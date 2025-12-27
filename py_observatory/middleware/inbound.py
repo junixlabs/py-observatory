@@ -1,7 +1,8 @@
 """FastAPI middleware for inbound request monitoring."""
 
 import time
-from typing import Callable, Awaitable
+from collections.abc import Awaitable
+from typing import Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request

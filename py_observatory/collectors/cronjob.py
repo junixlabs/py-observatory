@@ -3,20 +3,14 @@
 import asyncio
 import functools
 import time
-import traceback
-from contextlib import asynccontextmanager, contextmanager
-from dataclasses import dataclass, field
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import (
     TYPE_CHECKING,
-    Any,
     Callable,
-    Dict,
-    List,
     Optional,
-    TypeVar,
-    Union,
 )
 
 if TYPE_CHECKING:
@@ -74,8 +68,8 @@ class CronjobCollector:
         """
         self._exporter = exporter
         self._enabled = enabled
-        self._jobs: Dict[str, JobInfo] = {}
-        self._current_executions: Dict[str, JobExecution] = {}
+        self._jobs: dict[str, JobInfo] = {}
+        self._current_executions: dict[str, JobExecution] = {}
 
     def register_job(
         self,
@@ -108,7 +102,7 @@ class CronjobCollector:
         """
         return self._jobs.get(name)
 
-    def get_all_jobs(self) -> List[JobInfo]:
+    def get_all_jobs(self) -> list[JobInfo]:
         """Get all registered jobs.
 
         Returns:
@@ -216,7 +210,7 @@ class CronjobCollector:
         now = datetime.now()
 
         error_type = type(error).__name__ if error else "Unknown"
-        error_msg = str(error) if error else ""
+        str(error) if error else ""
 
         # Update job info
         if job_name in self._jobs:

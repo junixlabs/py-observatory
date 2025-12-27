@@ -1,9 +1,9 @@
 """Configuration module for py-observatory."""
 
+import os
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional
-import os
+from typing import Optional
 
 
 class StorageType(str, Enum):
@@ -70,7 +70,7 @@ class AuthConfig:
 class InboundConfig:
     """Inbound HTTP monitoring configuration."""
     enabled: bool = True
-    exclude_paths: List[str] = field(default_factory=lambda: [
+    exclude_paths: list[str] = field(default_factory=lambda: [
         "/metrics",
         "/health",
         "/healthz",
@@ -80,10 +80,10 @@ class InboundConfig:
         "/redoc",
         "/openapi.json",
     ])
-    methods: List[str] = field(default_factory=lambda: [
+    methods: list[str] = field(default_factory=lambda: [
         "GET", "POST", "PUT", "PATCH", "DELETE"
     ])
-    exclude_headers: List[str] = field(default_factory=lambda: [
+    exclude_headers: list[str] = field(default_factory=lambda: [
         "authorization",
         "cookie",
         "x-api-key",
@@ -114,7 +114,7 @@ class InboundConfig:
 class OutboundConfig:
     """Outbound HTTP monitoring configuration."""
     enabled: bool = True
-    exclude_hosts: List[str] = field(default_factory=lambda: [
+    exclude_hosts: list[str] = field(default_factory=lambda: [
         "localhost",
         "127.0.0.1",
     ])
@@ -138,7 +138,7 @@ class OutboundConfig:
 class ExceptionConfig:
     """Exception tracking configuration."""
     enabled: bool = True
-    ignore_exceptions: List[str] = field(default_factory=lambda: [
+    ignore_exceptions: list[str] = field(default_factory=lambda: [
         "starlette.exceptions.HTTPException",
         "fastapi.exceptions.RequestValidationError",
     ])
@@ -163,7 +163,7 @@ class PrometheusConfig:
     """Prometheus-specific configuration."""
     endpoint: str = "/metrics"
     storage: StorageType = StorageType.MEMORY
-    buckets: List[float] = field(default_factory=lambda: [
+    buckets: list[float] = field(default_factory=lambda: [
         0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0
     ])
     redis: RedisConfig = field(default_factory=RedisConfig)
@@ -199,13 +199,13 @@ class ObservatoryConfig:
     inbound: InboundConfig = field(default_factory=InboundConfig)
     outbound: OutboundConfig = field(default_factory=OutboundConfig)
     exceptions: ExceptionConfig = field(default_factory=ExceptionConfig)
-    labels: Dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=dict)
 
     @classmethod
     def from_env(cls) -> "ObservatoryConfig":
         """Create config from environment variables."""
         labels_str = os.getenv("OBSERVATORY_LABELS", "")
-        labels: Dict[str, str] = {}
+        labels: dict[str, str] = {}
 
         if labels_str:
             for pair in labels_str.split(","):

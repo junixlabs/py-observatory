@@ -1,6 +1,6 @@
 """Main Observatory facade class for py-observatory."""
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Optional
 
 from fastapi import FastAPI
 
@@ -127,7 +127,7 @@ class Observatory:
     async def increment(
         self,
         name: str,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
         value: float = 1.0,
     ) -> None:
         """Increment a custom counter metric.
@@ -146,7 +146,7 @@ class Observatory:
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Set a custom gauge metric value.
 
@@ -164,7 +164,7 @@ class Observatory:
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Observe a custom histogram metric.
 
@@ -240,7 +240,7 @@ class Observatory:
         """
         return self._cronjob_collector.track(job_name, schedule)
 
-    def get_jobs(self) -> List[JobInfo]:
+    def get_jobs(self) -> list[JobInfo]:
         """Get all registered cronjobs.
 
         Returns:

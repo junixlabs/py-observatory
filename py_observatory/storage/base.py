@@ -1,13 +1,13 @@
 """Base storage protocol for py-observatory."""
 
-from typing import Any, Dict, List, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @runtime_checkable
 class StorageProtocol(Protocol):
     """Protocol defining the storage adapter interface."""
 
-    async def update_counter(self, data: Dict[str, Any]) -> None:
+    async def update_counter(self, data: dict[str, Any]) -> None:
         """Update a counter metric.
 
         Args:
@@ -21,7 +21,7 @@ class StorageProtocol(Protocol):
         """
         ...
 
-    async def update_gauge(self, data: Dict[str, Any]) -> None:
+    async def update_gauge(self, data: dict[str, Any]) -> None:
         """Update a gauge metric.
 
         Args:
@@ -36,7 +36,7 @@ class StorageProtocol(Protocol):
         """
         ...
 
-    async def update_histogram(self, data: Dict[str, Any]) -> None:
+    async def update_histogram(self, data: dict[str, Any]) -> None:
         """Update a histogram metric.
 
         Args:
@@ -51,7 +51,7 @@ class StorageProtocol(Protocol):
         """
         ...
 
-    async def collect(self) -> List[Dict[str, Any]]:
+    async def collect(self) -> list[dict[str, Any]]:
         """Collect all metrics for rendering.
 
         Returns:

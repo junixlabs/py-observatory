@@ -1,10 +1,11 @@
 """File-based storage adapter for py-observatory."""
 
 import asyncio
+import contextlib
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from ..config import FileStorageConfig
 
@@ -37,7 +38,7 @@ class FileStorage:
         self._config = config
         self._path = Path(config.path)
         self._lock = asyncio.Lock()
-        self._data: Dict[str, Any] = {
+        self._data: dict[str, Any] = {
             "counters": {},
             "gauges": {},
             "histograms": {},
@@ -58,10 +59,8 @@ class FileStorage:
             async with aiofiles.open(self._path, "r") as f:
                 content = await f.read()
                 if content:
-                    try:
+                    with contextlib.suppress(json.JSONDecodeError):
                         self._data = json.loads(content)
-                    except json.JSONDecodeError:
-                        pass
 
         self._loaded = True
 
@@ -76,7 +75,7 @@ class FileStorage:
 
         self._dirty = False
 
-    async def update_counter(self, data: Dict[str, Any]) -> None:
+    async def update_counter(self, data: dict[str, Any]) -> None:
         """Update a counter metric."""
         async with self._lock:
             await self._load()
@@ -99,7 +98,7 @@ class FileStorage:
             self._dirty = True
             await self._save()
 
-    async def update_gauge(self, data: Dict[str, Any]) -> None:
+    async def update_gauge(self, data: dict[str, Any]) -> None:
         """Update a gauge metric."""
         async with self._lock:
             await self._load()
@@ -127,7 +126,7 @@ class FileStorage:
             self._dirty = True
             await self._save()
 
-    async def update_histogram(self, data: Dict[str, Any]) -> None:
+    async def update_histogram(self, data: dict[str, Any]) -> None:
         """Update a histogram metric."""
         async with self._lock:
             await self._load()
@@ -166,15 +165,15 @@ class FileStorage:
             self._dirty = True
             await self._save()
 
-    async def collect(self) -> List[Dict[str, Any]]:
+    async def collect(self) -> list[dict[str, Any]]:
         """Collect all metrics from file."""
         async with self._lock:
             await self._load()
             metrics = []
 
             # Group counters by name
-            counter_groups: Dict[str, Dict[str, Any]] = {}
-            for key, counter in self._data["counters"].items():
+            counter_groups: dict[str, dict[str, Any]] = {}
+            for _key, counter in self._data["counters"].items():
                 name = counter["meta"]["name"]
                 if name not in counter_groups:
                     counter_groups[name] = {
@@ -188,7 +187,7 @@ class FileStorage:
                     "value": counter["value"],
                 })
 
-            for name, data in sorted(counter_groups.items()):
+            for _name, data in sorted(counter_groups.items()):
                 metrics.append({
                     "name": data["meta"]["name"],
                     "help": data["meta"]["help"],
@@ -198,8 +197,8 @@ class FileStorage:
                 })
 
             # Group gauges by name
-            gauge_groups: Dict[str, Dict[str, Any]] = {}
-            for key, gauge in self._data["gauges"].items():
+            gauge_groups: dict[str, dict[str, Any]] = {}
+            for _key, gauge in self._data["gauges"].items():
                 name = gauge["meta"]["name"]
                 if name not in gauge_groups:
                     gauge_groups[name] = {
@@ -213,7 +212,7 @@ class FileStorage:
                     "value": gauge["value"],
                 })
 
-            for name, data in sorted(gauge_groups.items()):
+            for _name, data in sorted(gauge_groups.items()):
                 metrics.append({
                     "name": data["meta"]["name"],
                     "help": data["meta"]["help"],
@@ -223,8 +222,8 @@ class FileStorage:
                 })
 
             # Collect histograms
-            histogram_groups: Dict[str, Dict[str, Any]] = {}
-            for key, hist in self._data["histograms"].items():
+            histogram_groups: dict[str, dict[str, Any]] = {}
+            for _key, hist in self._data["histograms"].items():
                 name = hist["meta"]["name"]
                 if name not in histogram_groups:
                     histogram_groups[name] = {
@@ -233,13 +232,13 @@ class FileStorage:
                     }
                 histogram_groups[name]["samples_data"].append(hist)
 
-            for name, data in sorted(histogram_groups.items()):
+            for _name, data in sorted(histogram_groups.items()):
                 metric = self._collect_histogram(data)
                 metrics.append(metric)
 
             return metrics
 
-    def _collect_histogram(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _collect_histogram(self, data: dict[str, Any]) -> dict[str, Any]:
         """Collect and compute histogram buckets."""
         meta = data["meta"]
         buckets = list(meta["buckets"]) + ["+Inf"]

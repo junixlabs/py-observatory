@@ -2,7 +2,7 @@
 
 import json
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from ..config import RedisConfig
 
@@ -51,7 +51,7 @@ class RedisStorage:
             )
         return self._client
 
-    def _metric_key(self, data: Dict[str, Any]) -> str:
+    def _metric_key(self, data: dict[str, Any]) -> str:
         """Generate Redis key for a metric."""
         return f"{self._prefix}{data['type']}:{data['name']}"
 
@@ -59,7 +59,7 @@ class RedisStorage:
         """Generate key for the set of metric keys."""
         return f"{self._prefix}{metric_type}{self.METRIC_KEYS_SUFFIX}"
 
-    async def update_counter(self, data: Dict[str, Any]) -> None:
+    async def update_counter(self, data: dict[str, Any]) -> None:
         """Update a counter metric in Redis."""
         client = await self._get_client()
         metric_key = self._metric_key(data)
@@ -80,7 +80,7 @@ class RedisStorage:
             await pipe.sadd(keys_set, metric_key)
             await pipe.execute()
 
-    async def update_gauge(self, data: Dict[str, Any]) -> None:
+    async def update_gauge(self, data: dict[str, Any]) -> None:
         """Update a gauge metric in Redis."""
         client = await self._get_client()
         metric_key = self._metric_key(data)
@@ -105,7 +105,7 @@ class RedisStorage:
             await pipe.sadd(keys_set, metric_key)
             await pipe.execute()
 
-    async def update_histogram(self, data: Dict[str, Any]) -> None:
+    async def update_histogram(self, data: dict[str, Any]) -> None:
         """Update a histogram metric in Redis."""
         client = await self._get_client()
         metric_key = self._metric_key(data)
@@ -138,7 +138,7 @@ class RedisStorage:
             await pipe.sadd(keys_set, metric_key)
             await pipe.execute()
 
-    async def collect(self) -> List[Dict[str, Any]]:
+    async def collect(self) -> list[dict[str, Any]]:
         """Collect all metrics from Redis."""
         client = await self._get_client()
         metrics = []
@@ -209,8 +209,8 @@ class RedisStorage:
         return metrics
 
     def _collect_histogram(
-        self, meta: Dict[str, Any], raw: Dict[str, str]
-    ) -> Dict[str, Any]:
+        self, meta: dict[str, Any], raw: dict[str, str]
+    ) -> dict[str, Any]:
         """Collect and compute histogram buckets from Redis data."""
         buckets = list(meta["buckets"]) + ["+Inf"]
 
@@ -224,7 +224,7 @@ class RedisStorage:
         }
 
         # Group by label values
-        label_value_data: Dict[str, Dict[str, float]] = defaultdict(
+        label_value_data: dict[str, dict[str, float]] = defaultdict(
             lambda: {"sum": 0, "count": 0, "buckets": defaultdict(int)}
         )
 

@@ -1,6 +1,6 @@
 """Exception handler for py-observatory."""
 
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from fastapi import FastAPI, Request
 from starlette.responses import Response
@@ -51,7 +51,7 @@ class ObservatoryExceptionHandler:
     async def record_exception(
         self,
         exception: BaseException,
-        context: Optional[Dict[str, Any]] = None,
+        context: Optional[dict[str, Any]] = None,
     ) -> None:
         """Record an exception.
 

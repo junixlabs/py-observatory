@@ -1,7 +1,7 @@
 """Prometheus exporter for py-observatory."""
 
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from ..config import ObservatoryConfig, StorageType
 from ..storage.memory import MemoryStorage
@@ -80,7 +80,7 @@ class PrometheusExporter:
         # Truncate to 128 chars
         return value[:128]
 
-    async def record_inbound(self, data: Dict[str, Any]) -> None:
+    async def record_inbound(self, data: dict[str, Any]) -> None:
         """Record inbound HTTP request metrics.
 
         Args:
@@ -113,7 +113,7 @@ class PrometheusExporter:
             "buckets": self._config.prometheus.buckets,
         })
 
-    async def record_outbound(self, data: Dict[str, Any]) -> None:
+    async def record_outbound(self, data: dict[str, Any]) -> None:
         """Record outbound HTTP request metrics.
 
         Args:
@@ -149,7 +149,7 @@ class PrometheusExporter:
     async def record_exception(
         self,
         exception: BaseException,
-        context: Optional[Dict[str, Any]] = None,
+        context: Optional[dict[str, Any]] = None,
     ) -> None:
         """Record exception metrics.
 
@@ -186,7 +186,7 @@ class PrometheusExporter:
     async def increment_counter(
         self,
         name: str,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
         value: float = 1.0,
     ) -> None:
         """Increment a custom counter metric.
@@ -212,7 +212,7 @@ class PrometheusExporter:
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Set a custom gauge metric value.
 
@@ -238,7 +238,7 @@ class PrometheusExporter:
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Observe a custom histogram metric.
 
@@ -269,7 +269,7 @@ class PrometheusExporter:
         metrics = await self._storage.collect()
         return self._render_text_format(metrics)
 
-    def _render_text_format(self, metrics: List[Dict[str, Any]]) -> str:
+    def _render_text_format(self, metrics: list[dict[str, Any]]) -> str:
         """Render metrics in Prometheus exposition format.
 
         Args:
@@ -278,7 +278,7 @@ class PrometheusExporter:
         Returns:
             Prometheus text format string.
         """
-        lines: List[str] = []
+        lines: list[str] = []
 
         for metric in metrics:
             name = metric["name"]

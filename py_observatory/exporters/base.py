@@ -1,13 +1,13 @@
 """Base exporter protocol for py-observatory."""
 
-from typing import Any, Dict, Optional, Protocol, runtime_checkable
+from typing import Any, Optional, Protocol, runtime_checkable
 
 
 @runtime_checkable
 class ExporterProtocol(Protocol):
     """Protocol defining the exporter interface."""
 
-    async def record_inbound(self, data: Dict[str, Any]) -> None:
+    async def record_inbound(self, data: dict[str, Any]) -> None:
         """Record an inbound HTTP request.
 
         Args:
@@ -20,7 +20,7 @@ class ExporterProtocol(Protocol):
         """
         ...
 
-    async def record_outbound(self, data: Dict[str, Any]) -> None:
+    async def record_outbound(self, data: dict[str, Any]) -> None:
         """Record an outbound HTTP request.
 
         Args:
@@ -37,7 +37,7 @@ class ExporterProtocol(Protocol):
     async def record_exception(
         self,
         exception: BaseException,
-        context: Optional[Dict[str, Any]] = None,
+        context: Optional[dict[str, Any]] = None,
     ) -> None:
         """Record an exception.
 
@@ -50,7 +50,7 @@ class ExporterProtocol(Protocol):
     async def increment_counter(
         self,
         name: str,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
         value: float = 1.0,
     ) -> None:
         """Increment a custom counter metric.
@@ -66,7 +66,7 @@ class ExporterProtocol(Protocol):
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Set a custom gauge metric value.
 
@@ -81,7 +81,7 @@ class ExporterProtocol(Protocol):
         self,
         name: str,
         value: float,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None:
         """Observe a custom histogram metric.
 
